@@ -1,0 +1,111 @@
+/*
+ * Noah Dinan
+ * Weather Data Generation
+ */
+
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'application'
+    id 'java-library'
+    id 'com.diffplug.spotless' version '7.0.0.BETA2'
+}
+
+ext {
+    projectName = 'Main'
+}
+
+
+eclipse {
+    project {
+        name = "$projectName"
+    }
+
+    classpath {
+        defaultOutputDir = file("${project.projectDir}/build/eclipse")
+        file {
+            whenMerged {
+                cp -> cp.getEntries().forEach{
+                    cpEntry -> if(cpEntry.kind=='src') {
+                        cpEntry.output = cpEntry.output.replace('bin/', 'build/eclipse/')
+                    }
+                }
+            }
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+application {
+    mainClass = "kata." + "$projectName"
+}
+
+repositories {
+    mavenCentral()
+    gradlePluginPortal()
+}
+
+dependencies {
+    implementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'commons-httpclient:commons-httpclient:3.1'
+    implementation 'org.apache.poi:poi:4.0.0'
+    implementation 'org.apache.poi:poi-ooxml:4.0.0'
+    implementation 'org.json:json:20240303'
+}
+
+
+group = 'dinann'
+version = '1.0.0'
+java.sourceCompatibility = "22.0.2"
+
+run {
+    standardInput = System.in
+}
+
+/** 
+ * :uberjar
+ */
+task uberjar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'kata.Main'
+    }
+    archiveBaseName = "$projectName"
+    archiveClassifier = ""
+    archiveVersion = ""
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+            exclude '**/test/**'
+        }
+
+        resources {
+            srcDirs = ['src/resources']
+        }
+    }
+
+    test {
+        java {
+            srcDirs = ['src']
+            exclude '**/kata/**'
+        }
+    }
+}
+
+spotless {
+  java {
+    indentWithSpaces(4)
+    formatAnnotations()
+  }
+}
+
