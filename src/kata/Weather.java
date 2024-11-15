@@ -18,8 +18,8 @@ class Weather {
     private Date sunset;
     private int bikeability;
 
-    public Weather() {
-
+    public Weather(JSONObject json) {
+        System.out.println(json.toString(4));
     }
 
 	public String getURL() {
