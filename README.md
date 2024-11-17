@@ -25,7 +25,7 @@
 
 ### __usage__
 >obtain or generate an API key for Google's Geolocation API
->    - visit [console.cloud.google.com](https://console.cloud.google.com/google/maps-apis/credentials)
+>    - to generate a key, follow the instructions [here](https://support.google.com/googleapi/answer/6158862?hl=en)
 
 ---
 
