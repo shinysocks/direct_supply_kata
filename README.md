@@ -29,13 +29,19 @@
 
 ---
 
->run with jarfile
->```
+>run with jarfile (Unix)
+>```bash
 >GEOLOCATION_API_KEY="GOOGLE_GEOLOCATION_KEY" java -jar kata.jar "San Diego" "San Francisco" "Los Angeles" "Sacramento"
 >```
 
 ---
 
+>run with jarfile (Windows)
+>```bash
+>$env:GEOLOCATION_API_KEY="GOOGLE_GEOLOCATION_KEY" ; java -jar kata.jar "San Diego" "San Francisco" "Los Angeles" "Sacramento"
+>```
+
+---
 >run with gradle
 >```
 >GEOLOCATION_API_KEY="GOOGLE_GEOLOCATION_KEY" gradle run --args="milwaukee madison 'green bay' chicago antarctica"
