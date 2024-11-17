@@ -12,7 +12,7 @@ plugins {
 }
 
 ext {
-    projectName = 'Main'
+    projectName = 'kata'
 }
 
 
@@ -40,7 +40,7 @@ test {
 }
 
 application {
-    mainClass = "kata." + "$projectName"
+    mainClass = "kata.Main"
 }
 
 repositories {
@@ -59,7 +59,7 @@ dependencies {
 }
 
 
-group = 'dinann'
+group = 'kata'
 version = '1.0.0'
 java.sourceCompatibility = "22.0.2"
 

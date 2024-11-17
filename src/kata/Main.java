@@ -4,42 +4,49 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.commons.httpclient.HttpException;
+import org.json.JSONException;
 
 public class Main {
+    public static final String API_KEY = System.getenv("GEOLOCATION_API_KEY");
+
     public static void main(String[] args) {
-        // TODO: read environment variables for Geolocation API key
+
+        if (API_KEY == null) {
+            Log.fatal("No API key provided");
+        } else {
+            Log.info("Geolocation Key: " + API_KEY);
+        }
 
         if (args.length == 0) {
-            System.err.println("At least one location must be provided.");
-            System.exit(1);
+            Log.fatal("At least one location must be provided.");
         }
 
-        Location[] locations = new Location[args.length - 1];
+        Location[] locations = new Location[args.length];
 
-        for (int i = 1; i < args.length; i++) {
-            locations[i - 1] = new Location();
-            try {
-                locations[i - 1].geolocate(args[i])
-            } catch (HttpException _) {
-                System.err.println("HTTP exception for address: " + args[i]);
-            } catch (IOException _) {
-                System.err.println("IOException for address: " + args[i]);
-            } catch (Geolocate.GeolocateAPIException e) {
-                System.err.println(e.getMessage());
+        try {
+            for (int i = 0; i < args.length; i++) {
+                locations[i] = new Location();
+                try {
+                    locations[i].geolocate(args[i]);
+                    locations[i].query();
+                } catch (JSONException e) {
+                    Log.warn(e.getMessage());
+                }
             }
-        }
-
-        for (Geolocate.Place p : geolocate.getPlaces()) {
-
-            System.out.println(p); // replace with api query
+        } catch (HttpException _) {
+            Log.fatal("Encountered a fatal HTTP exception, likely an internal server error");
+        } catch (IOException _) {
+            Log.fatal("Unable to connect to the internet."); 
+        } catch (Location.GeolocateAPIException e) {
+            Log.fatal(e.getMessage()); 
         }
 
         try {
-            Sheet sheet = new Sheet();
+            Sheet sheet = new Sheet(locations);
             sheet.writeToFile(new FileOutputStream("weather.xlsx"));
             sheet.close();
         } catch (IOException _) {
-            System.err.println("unable to write to weather.xlsx");
+            Log.fatal("unable to write to weather.xlsx");
         }
     }
 }

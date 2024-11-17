@@ -1,5 +1,6 @@
 package kata;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import org.apache.commons.httpclient.HttpClient;
@@ -12,35 +13,27 @@ import org.apache.commons.httpclient.methods.GetMethod;
  * contains latitude, longitude, timezone, and weather data for location
  */
 class Location {
+    public boolean HAS_RESULTS = true;
     private String name;
     private double latitude;
     private double longitude;
     private String timezone;
     private Weather weather;
 
-	/**
-	 * GeolocateAPIException thrown when API encounters an exception
-	 */
-	class GeolocateAPIException extends Exception {
+    /**
+     * GeolocateAPIException thrown when API encounters an exception
+     */
+    class GeolocateAPIException extends Exception {
         GeolocateAPIException(String message) {
             super(message);
         }
-	}
-
-	/**
-	 * OpenMeteoAPIException thrown when API encounters an exception
-	 */
-	class OpenMeteoAPIException extends Exception {
-        OpenMeteoAPIException(String message) {
-            super(message);
-        }
-	}
+    }
 
     public void query() throws HttpException, IOException {
         final String url = String.format("https://api.open-meteo.com/v1/forecast?" +
             "latitude=%s" +
             "&longitude=%s" +
-            "&current=temperature_2m,weather_code&hourly=precipitation,wind_speed_10m" +
+            "&current=temperature_2m,weather_code,is_day&hourly=precipitation,wind_speed_10m" +
             "&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset" +
             "&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch" +
             "&timezone=%s&forecast_days=1", this.latitude, this.longitude, this.timezone);
@@ -48,24 +41,23 @@ class Location {
         final GetMethod get = new GetMethod(url);
         new HttpClient().executeMethod(get);
 
-        this.weather = new Weather(new JSONObject(get.getResponseBodyAsString()));
-
+        String res = new String(get.getResponseBodyAsStream().readAllBytes());
+        this.weather = new Weather(new JSONObject(res));
         get.releaseConnection();
     }
 
     /**
      * run GeoLocation query for provided address
      * @param address
-     * @param apiKey 
      * @throws HttpException
      * @throws IOException
      * @throws GeolocateAPIException 
      */
-    public void geolocate(String address, String apiKey) throws HttpException, IOException, GeolocateAPIException {
+    public void geolocate(String address) throws HttpException, IOException, GeolocateAPIException, JSONException {
         final String BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 
         address = String.join("+", address.split(" "));
-        final String url = String.format("%s?address=%s&key=%s", BASE_URL, address, apiKey);
+        final String url = String.format("%s?address=%s&key=%s", BASE_URL, address, Main.API_KEY);
         final GetMethod get = new GetMethod(url);
 
         new HttpClient().executeMethod(get);
@@ -76,6 +68,11 @@ class Location {
             throw new GeolocateAPIException(res.getString("error_message"));
         }
 
+        if (res.getJSONArray("results").length() == 0) {
+            this.HAS_RESULTS = false;
+            throw new JSONException("No results for " + address);
+        }
+
         get.releaseConnection();
 
         double[] coords = getCoords(res);
@@ -83,6 +80,8 @@ class Location {
         this.latitude = coords[0];
         this.longitude = coords[1];
         this.timezone = TimezoneMapper.latLngToTimezoneString(coords[0], coords[1]);
+
+        Log.info("found " + this);
     }
 
     /**
@@ -110,9 +109,25 @@ class Location {
         return new double[] { c.getDouble("lat"), c.getDouble("lng") };
     }
 
-    @Override
-    public String toString() {
-        return name + " @ [ " + latitude + ", " + longitude + " ] + " + timezone;
+    /**
+     * gets each row of data to put into excel sheet
+     * @return String[]
+     */
+    public String[] getData() {
+        return new String[] {
+            this.name,
+            weather.getCurrentTemperature(),
+            weather.getCurrentDescription(),
+            weather.getTodayHigh(),
+            weather.getTodayLow(),
+            weather.isBikeable(),
+            weather.getSunrise(),
+            weather.getSunset()
+        };
     }
 
+    @Override
+    public String toString() {
+        return name + " @ [" + latitude + ", " + longitude + "]";
+    }
 }
