@@ -7,7 +7,7 @@
 >weather in several locations trivial. I decided to use java for the project because of the
 >easy to use Apache POI library for generating xlsx files, and because of its platform independence.
 
->One unique aspect of this project is the "Should I go biking?" column
+>One unique aspect of this project is the "Should I go biking?" row
 >which determines how suitable the weather in each location is for a ride
 >based on amount of precipitation, wind speed, and temperature.
 
