@@ -56,7 +56,7 @@
 2. [google's geolocation api](https://developers.google.com/maps/documentation/geolocation/overview)
 3. [apache poi](https://github.com/apache/poi) 
 4. [LatLongToTimezone](https://github.com/drtimcooper/LatLongToTimezone) for timezone calculations (TimezoneMapper.java)
-5. [WMO Weather code descriptions] (https://gist.github.com/stellasphere/9490c195ed2b53c707087c8c2db4ec0c) (descriptions.json)
+5. [WMO descriptions](https://gist.github.com/stellasphere/9490c195ed2b53c707087c8c2db4ec0c) (descriptions.json)
 
 
 ### __screenshots__
