@@ -29,21 +29,21 @@
 
 ---
 
->run with jarfile (Unix)
->```bash
->GEOLOCATION_API_KEY="GOOGLE_GEOLOCATION_KEY" java -jar kata.jar "San Diego" "San Francisco" "Los Angeles" "Sacramento"
->```
-
----
-
 >run with jarfile (Windows)
->```bash
+>```sh
 >$env:GEOLOCATION_API_KEY="GOOGLE_GEOLOCATION_KEY" ; java -jar kata.jar "San Diego" "San Francisco" "Los Angeles" "Sacramento"
 >```
 
 ---
->run with gradle
+
+>run with jarfile (Unix)
+>```sh
+>GEOLOCATION_API_KEY="GOOGLE_GEOLOCATION_KEY" java -jar kata.jar "San Diego" "San Francisco" "Los Angeles" "Sacramento"
 >```
+
+---
+>run with gradle
+>```sh
 >GEOLOCATION_API_KEY="GOOGLE_GEOLOCATION_KEY" gradle run --args="milwaukee madison 'green bay' chicago antarctica"
 >```
 
@@ -56,6 +56,7 @@
 2. [google's geolocation api](https://developers.google.com/maps/documentation/geolocation/overview)
 3. [apache poi](https://github.com/apache/poi) 
 4. [LatLongToTimezone](https://github.com/drtimcooper/LatLongToTimezone) for timezone calculations (TimezoneMapper.java)
+5. [WMO Weather code descriptions] (https://gist.github.com/stellasphere/9490c195ed2b53c707087c8c2db4ec0c) (descriptions.json)
 
 
 ### __screenshots__

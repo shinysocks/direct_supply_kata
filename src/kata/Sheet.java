@@ -11,6 +11,10 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+/**
+ * Sheet with special methods to fill
+ * columns based on Location[] data
+ */
 class Sheet extends XSSFWorkbook {
     private XSSFSheet sheet;
     private int columnIndex = 0;
@@ -21,16 +25,12 @@ class Sheet extends XSSFWorkbook {
 
         for (Location location : locations) {
             if (location.HAS_RESULTS) {
-                generateColumn(location);
+                final XSSFCellStyle style = this.createCellStyle();
+                style.setAlignment(HorizontalAlignment.CENTER);
+
+                writeToColumn(location.getData(), style);
             }
         }
-    }
-
-    public void generateColumn(Location location) {
-        final XSSFCellStyle style = this.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER);
-
-        writeToColumn(location.getData(), style);
     }
 
     private void generateInitialColumn() {

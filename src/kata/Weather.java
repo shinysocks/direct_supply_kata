@@ -20,6 +20,10 @@ class Weather {
     private JSONArray precipitationHourly;
     private JSONObject weatherDescriptions;
 
+    /**
+     * Object to store weather data for a location
+     * @param json - JSON returned from Open Meteo query
+     */
     public Weather(JSONObject json) {
         JSONObject current = json.getJSONObject("current");
         currentTemperature = current.getDouble("temperature_2m");
@@ -49,10 +53,20 @@ class Weather {
         weatherDescriptions = new JSONObject(new String(bytes));
     }
 
+    /**
+     * returns the current temperature formatted with degree symbol
+     * @return String
+     */
     public String getCurrentTemperature() {
         return "" + currentTemperature + "°";
     }
 
+    /**
+     * returns a description of weather conditions based on the
+     * weather code. Descriptions are sourced from 'descriptions.json'
+     * which follows the WMO standard
+     * @return String
+     */
     public String getCurrentDescription() {
         try {
             JSONObject description = weatherDescriptions.getJSONObject("" + currentWeatherCode);
@@ -81,6 +95,11 @@ class Weather {
         return sunset.substring(11);
     }
 
+    /**
+     * returns if the weather is bikeable
+     * hint: it's always bikeable!
+     * @return String
+     */
     public String isBikeable() {
         double totalPrecipitation = 0;
         double maxWindSpeed = 0;
@@ -88,10 +107,9 @@ class Weather {
             totalPrecipitation += precipitationHourly.getDouble(i);
         }
 
-        for (Object s : windHourly) {
-            double speed = Double.parseDouble(((BigDecimal) s).toString());
-            if (speed > maxWindSpeed) {
-                maxWindSpeed = speed;
+        for (int i = 0; i < windHourly.length(); i++) {
+            if (windHourly.getDouble(i) > maxWindSpeed) {
+                maxWindSpeed = windHourly.getDouble(i);
             }
         }
 

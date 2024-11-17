@@ -1,16 +1,17 @@
 package kata;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.io.IOException;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Location
- * stores methods to query Google's Geolocation and weather APIs
- * contains latitude, longitude, timezone, and weather data for location
+ * stores methods to query Google's Geolocation and Open Meteo weather APIs
+ * contains name, latitude, longitude, timezone, and weather data for location
  */
 class Location {
     public boolean HAS_RESULTS = false;
@@ -29,6 +30,12 @@ class Location {
         }
     }
 
+    /**
+     * query the Open Meteo API based on the coordinates
+     * from geolocate()
+     * @throws HttpException
+     * @throws IOException
+     */
     public void query() throws HttpException, IOException {
         final String url = String.format("https://api.open-meteo.com/v1/forecast?" +
             "latitude=%s" +
@@ -52,6 +59,8 @@ class Location {
      * @throws HttpException
      * @throws IOException
      * @throws GeolocateAPIException 
+     * @throws JSONException
+     * @throws IllegalArgumentException
      */
     public void geolocate(String address) throws HttpException, IOException, GeolocateAPIException, JSONException, IllegalArgumentException {
         final String BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
@@ -85,7 +94,7 @@ class Location {
     }
 
     /**
-     * return location name from response JSONObject
+     * return location name from response JSON Object
      * @param json
      * @return String
      */
@@ -96,9 +105,9 @@ class Location {
     }
 
     /**
-     * return latitude and longitude coords from response JSONObject
+     * return latitude and longitude coords from response JSON Object
      * @param json
-     * @return
+     * @return double[]
      */
     private double[] getCoords(JSONObject json) {
         JSONObject c = json.getJSONArray("results")
@@ -110,7 +119,7 @@ class Location {
     }
 
     /**
-     * gets each row of data to put into excel sheet
+     * returns the entries for this location's excel column
      * @return String[]
      */
     public String[] getData() {
