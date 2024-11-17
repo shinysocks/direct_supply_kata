@@ -6,6 +6,8 @@ import java.io.IOException;
 import org.apache.commons.httpclient.HttpException;
 import org.json.JSONException;
 
+import kata.Location.GeolocateAPIException;
+
 public class Main {
     public static final String API_KEY = System.getenv("GEOLOCATION_API_KEY");
 
@@ -26,7 +28,11 @@ public class Main {
         try {
             for (int i = 0; i < args.length; i++) {
                 locations[i] = new Location();
+
                 try {
+                    if (args[i].length() == 0) {
+                        throw new IllegalArgumentException("Argument of length zero is not allowed");
+                    }
                     locations[i].geolocate(args[i]);
                     locations[i].query();
                 } catch (JSONException e) {
