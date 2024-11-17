@@ -31,6 +31,8 @@ public class Main {
                     locations[i].query();
                 } catch (JSONException e) {
                     Log.warn(e.getMessage());
+                } catch (IllegalArgumentException _) {
+                    Log.warn("Malformed location: '" + args[i] + "'");
                 }
             }
         } catch (HttpException _) {

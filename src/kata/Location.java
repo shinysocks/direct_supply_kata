@@ -13,7 +13,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
  * contains latitude, longitude, timezone, and weather data for location
  */
 class Location {
-    public boolean HAS_RESULTS = true;
+    public boolean HAS_RESULTS = false;
     private String name;
     private double latitude;
     private double longitude;
@@ -53,7 +53,7 @@ class Location {
      * @throws IOException
      * @throws GeolocateAPIException 
      */
-    public void geolocate(String address) throws HttpException, IOException, GeolocateAPIException, JSONException {
+    public void geolocate(String address) throws HttpException, IOException, GeolocateAPIException, JSONException, IllegalArgumentException {
         final String BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 
         address = String.join("+", address.split(" "));
@@ -69,7 +69,6 @@ class Location {
         }
 
         if (res.getJSONArray("results").length() == 0) {
-            this.HAS_RESULTS = false;
             throw new JSONException("No results for " + address);
         }
 
@@ -82,6 +81,7 @@ class Location {
         this.timezone = TimezoneMapper.latLngToTimezoneString(coords[0], coords[1]);
 
         Log.info("found " + this);
+        HAS_RESULTS = true;
     }
 
     /**
